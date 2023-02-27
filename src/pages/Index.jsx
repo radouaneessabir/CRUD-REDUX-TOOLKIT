@@ -1,19 +1,27 @@
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchPosts } from "../state/postSlice";
+import { fetchPosts, deletePost } from "../state/postSlice";
 import PostList from '../components/PostList'
+import Loading from '../components/Loading';
 
 const Index = () => {
   const dispatch = useDispatch(); 
-  const posts = useSelector((state) => state.posts);
+  const { records, loading, error } = useSelector((state) => state.posts);
   
   useEffect(() => {
     dispatch(fetchPosts())
   }, [dispatch])
 
+  const deleteRacord = useCallback(
+    (id) => dispatch(deletePost(id)),
+    [dispatch]
+  )
+
   return (
-    <PostList />
+    <Loading loading={loading} error={error}>
+      <PostList data={records} deleteRacord={deleteRacord} />
+    </Loading>
   )
 }
 
